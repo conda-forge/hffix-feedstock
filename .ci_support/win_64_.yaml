@@ -5,6 +5,6 @@ channel_sources:
 channel_targets:
 - conda-forge main
 cxx_compiler:
-- vs2019
+- vs2022
 libboost_devel:
-- '1.84'
+- '1.88'

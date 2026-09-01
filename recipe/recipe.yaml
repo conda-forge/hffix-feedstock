@@ -1,0 +1,55 @@
+schema_version: 1
+
+context:
+  version: "1.4.1"
+
+package:
+  name: hffix
+  version: ${{ version }}
+
+source:
+  url: https://github.com/jamesdbrock/hffix/archive/refs/tags/v${{ version }}.tar.gz
+  sha256: 5afc6dd424d50ff322cb765e7f5dd6bafcddbac0c275e7d579c2c9dedf8801a5
+  patches:
+    # fix ssize_t on windows
+    - ssize_t_win.diff
+
+build:
+  number: 1
+  noarch: generic
+
+requirements:
+  build:
+    - ${{ stdlib('c') }}
+    - ${{ compiler('cxx') }}
+    - if: unix
+      then: make
+    - if: win
+      then: m2-make
+    - if: win
+      then: m2-base
+  host:
+    - libboost-devel
+  run:
+    - if: unix
+      then: __unix
+    - if: win
+      then: __win
+
+tests:
+  - script:
+      - if: unix
+        then: test -f ${PREFIX}/include/hffix.hpp
+      - if: win
+        then: if not exist %LIBRARY_INC%\hffix.hpp exit 1
+
+about:
+  summary: High Frequency FIX - C++ Library for Financial Information Exchange Protocol
+  license: BSD-2-Clause
+  license_file: LICENSE
+  homepage: https://github.com/jamesdbrock/hffix
+
+extra:
+  recipe-maintainers:
+    - isuruf
+    - timkpaine
